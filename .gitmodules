@@ -1,0 +1,3 @@
+[submodule "apps/WorkoutRecorder"]
+	path = apps/WorkoutRecorder
+	url = https://github.com/nesl/WorkoutRecorder
