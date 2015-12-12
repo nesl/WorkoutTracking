@@ -1,7 +1,5 @@
-% This script is copied and modified from
-% cube_visit_testing_script_session_v3.m. This script is going to revise
-% the rep counting mechanism, when more new users participate, the rep
-% counting error increases. Also, this script provides breakdown analysis.
+% This script revises the rep counting mechanism and provides breakdown
+% analysis.
 %
 % Strategies of improvements
 %   - Take median filter on the signal
@@ -66,7 +64,7 @@ fn_set = 0;
 rep_errors = [];
 
 % Disaggregation states
-contributor_list = {'B', 'C', 'P', 'S', 'M'};
+contributor_list = {'NESL'};
 num_contributors = numel(contributor_list);
 contributor_map = containers.Map(contributor_list, 1:num_contributors);
 
@@ -582,24 +580,8 @@ total_set_breakdown
 
 %rep_errors
 
-%% results to store in the file for figure generation
-
-PLAIN_RESULT_OUT_DIR = 'plain_result_for_drawing/';
-
-dlmwrite([PLAIN_RESULT_OUT_DIR 'revisit_set_pr_by_user.csv'], ...
-    [contributor_set_prec, contributor_set_recl; prec_set, recl_set], ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'revisit_rep_err_by_user.csv'], ...
-    [contributor_rep_abs_error; total_avg_abs_rep_error], ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'revisit_set_det_rate_by_type.csv'], ...
-    type_set_det_rate, ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'revisit_rep_err_by_type.csv'], ...
-    [type_abs_rep_error, type_total_rep_error], ...
-    'delimiter', ',', 'precision', 6);
-
 return
+
 %% get event time density
 num_steps = ceil(gravacc(end, 1) / T_WIN_STEP);
 generation_rates = zeros(num_steps, 1);
@@ -642,13 +624,3 @@ h2 = subplot(2, 1, 2);
 plot((1:num_steps) * R_WIN_STEP, generation_rates);
 linkaxes([h1, h2], 'x')
 
-
-%% extract task index
-tmp_manager = get_task_manager();
-
-type_to_keep = TYPE.get_standard_types();
-num_types = numel(type_to_keep);
-tmp_manager.keep_types(type_to_keep);
-tmp_manager.remove_fragile_tasks();
-tmp_manager.indexing();
-[task_idx, set_idx] = tmp_manager.query_by_contributor_type('P', 3, 3)

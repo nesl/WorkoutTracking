@@ -1,5 +1,5 @@
-% baseline_rep_counting2.m branches from baseline_rep_detection2.m. The
-% algorithm estimates number of reps based on average rep period. 
+% The script use autocorrelation approapch to estimate number of reps
+% based on average rep period. 
 %
 % strategies of improvement:
 %  - resolve the bug the algo always miss the last rep
@@ -9,7 +9,7 @@
 
 %% house keeping
 clc; close all; clear all;
-addpath(genpath('./'))
+add_paths
 
 %% start of the algorithm
 manager = get_task_manager();
@@ -22,7 +22,6 @@ manager.remove_fragile_tasks();
 manager.report_by_workout_type();
 
 
-% TODO: include more non-workout time in-between
 % Threashold for determing repetition from auto-correlation result
 DONT_CARE_SEC = 3;
 % Window for auto correlation
@@ -55,7 +54,7 @@ fn_set = 0;
 rep_errors = [];
 
 % Disaggregation states
-contributor_list = {'B', 'C', 'P', 'S', 'M'};
+contributor_list = {'NESL'};
 num_contributors = numel(contributor_list);
 contributor_map = containers.Map(contributor_list, 1:num_contributors);
 
@@ -433,24 +432,6 @@ total_set_breakdown
 
 %rep_errors
 
-
-%% results to store in the file for figure generation
-
-PLAIN_RESULT_OUT_DIR = 'plain_result_for_drawing/';
-
-dlmwrite([PLAIN_RESULT_OUT_DIR 'auto_set_pr_by_user.csv'], ...
-    [contributor_set_prec, contributor_set_recl; prec_set, recl_set], ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'auto_rep_err_by_user.csv'], ...
-    [contributor_rep_abs_error; total_avg_abs_rep_error], ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'auto_set_det_rate_by_type.csv'], ...
-    type_set_det_rate, ...
-    'delimiter', ',', 'precision', 6);
-dlmwrite([PLAIN_RESULT_OUT_DIR 'auto_rep_err_by_type.csv'], ...
-    [type_abs_rep_error, type_total_rep_error], ...
-    'delimiter', ',', 'precision', 6);
-
 return
 
 %% plot grav data
@@ -460,29 +441,6 @@ plot(gravacc(:, 1), gravacc(:, 3), 'g');
 plot(gravacc(:, 1), gravacc(:, 4), 'b');
 hold off
 
-
-%% check whether all sets in each task have the same type
-for task_idx = 1 : numel(manager.tasks)
-    cur_task = manager.tasks{task_idx};
-    if numel(cur_task.sets) > 1
-        for i = 2:numel(cur_task.sets)
-            if cur_task.sets(1).type ~= cur_task.sets(i).type
-                % expect not printing the following lines
-                [task_idx cur_task.sets(1).type cur_task.sets(i).type]
-            end
-        end
-    end
-end
-
-%% extract task index
-tmp_manager = get_task_manager();
-
-type_to_keep = TYPE.get_standard_types();
-num_types = numel(type_to_keep);
-tmp_manager.keep_types(type_to_keep);
-tmp_manager.remove_fragile_tasks();
-tmp_manager.indexing();
-[task_idx, set_idx] = tmp_manager.query_by_contributor_type('M', 10, 4)
 
 %%
 % jitter=10:  rep error=1.130
