@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MiLift Workout Tracker</string>
+
+    <string name="instructions">Press Start to start Classifying</string>
+    <string name="action_settings">Settings</string>
+    <string name="start_button_text">Start</string>
+    <string name="stop_button_text">Stop</string>
+
+    <string name="calendar_button_text">Calendar</string>
+    <string name="undo">Undo</string>
+</resources>
