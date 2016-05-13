@@ -1,32 +1,35 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
 
-android {
-    compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+model {
+    android {
+        compileSdkVersion 23
+        buildToolsVersion '23.0.2'
 
-    defaultConfig {
-        applicationId "edu.ucla.nesl.android.workoutbenchmark"
-        minSdkVersion 21
-        targetSdkVersion 22
-        versionCode 1
-        versionName "1.0"
-        ndk {
-            moduleName "sgd-crf"
-            cFlags "-std=c++11"
-            ldLibs "android", "log"
-            stl "gnustl_static"
+        defaultConfig {
+            applicationId "edu.ucla.nesl.android.workoutbenchmark"
+            minSdkVersion.apiLevel 21
+            targetSdkVersion.apiLevel 22
+            versionCode 1
+            versionName "1.0"
+            ndk {
+                moduleName "sgd-crf"
+                CFlags.add("-std=c++11")
+                ldLibs.add("android")
+                ldLibs.add("log")
+                stl "gnustl_static"
+            }
         }
-    }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles.add(file('proguard-rules.pro'))
+            }
         }
-    }
 
-    productFlavors {
-        create("all")
+        productFlavors {
+            create("all")
+        }
     }
 }
 
